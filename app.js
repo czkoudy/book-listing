@@ -9,16 +9,7 @@ class Book {
 
 class UI {
   static displayBooks(){
-    const storedBooks = [{
-      title: "Book One",
-      author : "Jakub Koudela",
-      isbn: '343434'
-    },
-    {
-      title: "Book Two",
-      author : "Ivanka Koudelova",
-      isbn: '545454'
-    }]
+    const storedBooks = Store.getBooks()
     const books = storedBooks
 
     books.forEach(book => UI.addBookToList(book))
@@ -36,6 +27,7 @@ class UI {
     <td><a href="#" class="btn btn-danger btn-sm delete">X</a></td>
     `;
     list.appendChild(row);
+
 
   }
 
@@ -70,6 +62,43 @@ class UI {
 }
 
 }
+// Local storage
+
+class Store {
+  static getBooks(){
+    let books;
+    if(localStorage.getItem('books') === null){
+      books = []
+    } else {
+      books = JSON.parse(localStorage.getItem('books'))
+    }
+    return books
+  }
+
+  static addBook(book){
+
+    const books = Store.getBooks()
+
+    books.push(book)
+
+    localStorage.setItem('books', JSON.stringify(books))
+
+  }
+
+  static deleteBook(isbn){
+
+    const books = Store.getBooks()
+
+    books.forEach((book,index) => {
+      if(book.isbn === isbn){
+        books.splice(index, 1)
+      }
+    })
+    localStorage.setItem('books', JSON.stringify(books))
+  }
+}
+
+
 
 // Display Books
 document.addEventListener('DOMContentLoaded', UI.displayBooks)
@@ -90,6 +119,7 @@ document.getElementById('book-form').addEventListener('submit', (e) => {
   const book = new Book(title,author, isbn)
 
   UI.addBookToList(book)
+  Store.addBook(book)
   UI.clearFields()
   UI.showAlert("Book has been added", "success")
 })
@@ -99,5 +129,6 @@ document.getElementById('book-form').addEventListener('submit', (e) => {
 
 document.getElementById('book-list').addEventListener('click', e => {
 UI.deleteBook(e.target)
+Store.deleteBook(e.target.parentElement.previousElementSibling.textContent)
 UI.showAlert("Book has been deleted", "warning")
 })
