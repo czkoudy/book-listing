@@ -37,6 +37,24 @@ class UI {
     `;
     list.appendChild(row);
   }
+
+  static clearFields() {
+    const fields = document.querySelectorAll('input[type=text]')
+
+    for (let field of fields){
+      field.value = ''
+    }
+  }
+
+  static deleteBook(element) {
+
+    if(element.classList.contains('delete')){
+
+        element.parentElement.parentElement.remove()
+
+  }
+}
+
 }
 
 
@@ -55,6 +73,12 @@ document.getElementById('book-form').addEventListener('submit', (e) => {
   const book = new Book(title,author, isbn)
 
   UI.addBookToList(book)
+  UI.clearFields()
+})
 
 
+// Delete book
+
+document.getElementById('book-list').addEventListener('click', e => {
+UI.deleteBook(e.target)
 })
