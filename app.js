@@ -36,6 +36,20 @@ class UI {
     <td><a href="#" class="btn btn-danger btn-sm delete">X</a></td>
     `;
     list.appendChild(row);
+
+  }
+
+  static showAlert(message, className) {
+    const div = document.createElement('div')
+    div.className = `alert alert-${className}`
+    div.appendChild(document.createTextNode(message))
+    const container = document.querySelector('.container')
+    const form = document.querySelector('#book-form')
+    container.insertBefore(div, form)
+    // Wipe out in 3 seconds after showing
+    setTimeout(() => {
+      div.remove()
+    }, 1500);
   }
 
   static clearFields() {
@@ -57,8 +71,6 @@ class UI {
 
 }
 
-
-
 // Display Books
 document.addEventListener('DOMContentLoaded', UI.displayBooks)
 
@@ -70,10 +82,16 @@ document.getElementById('book-form').addEventListener('submit', (e) => {
   const author = document.getElementById('author').value
   const isbn = document.getElementById('isbn').value
 
+  if(title === '' || author === '' || isbn === ''){
+    UI.showAlert("Please fill in all fields", "danger")
+    return false
+  }
+
   const book = new Book(title,author, isbn)
 
   UI.addBookToList(book)
   UI.clearFields()
+  UI.showAlert("Book has been added", "success")
 })
 
 
@@ -81,4 +99,5 @@ document.getElementById('book-form').addEventListener('submit', (e) => {
 
 document.getElementById('book-list').addEventListener('click', e => {
 UI.deleteBook(e.target)
+UI.showAlert("Book has been deleted", "warning")
 })
